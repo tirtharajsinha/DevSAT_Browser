@@ -1,0 +1,145 @@
+QDialog{
+background-color:rgb(41, 40, 40);
+}
+QToolBar {
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: rgb(41, 40, 40);
+}
+
+QLineEdit {
+  height: 40px;
+  font-size: 18px;
+
+  background-repeat: none;
+  background-position: left;
+  padding-left: 35px;
+  margin-left: 10px;
+  margin-right: 10px;
+  background-color: rgb(41, 40, 40);
+  color: white;
+}
+QTabWidget {
+  border: 0px solid black;
+  text-align: left;
+}
+QTabBar {
+  background: #222;
+  color: #666;
+  border-width: 0;
+  text-align: left;
+}
+QTabBar::tab:top {
+  height: 40px;
+  min-width: 200px;
+  max-width: 300px;
+  font-size: 14px;
+  text-align: left;
+  font-size:15px;
+  font-weight:500;
+  letter-spacing:1px;
+
+
+}
+
+QTabBar::tab:top:selected {
+  background-color: black;
+  color: white;
+  border-top:2px solid cyan;
+
+
+
+}
+QTabBar::tab:top:!selected {
+  color: black;
+  background-color: rgb(150,150,150);
+}
+
+QTabBar::tab:top:hover {
+  color: rgb(214, 24, 198);
+}
+QTabBar::close-button {
+  image: url(static/close1.png);
+}
+QTabBar::close-button:hover {
+  image: url(static/close1-hover.png);
+}
+
+QPushButton:hover {
+  color: cyan;
+}
+QLabel#head {
+  font-size: 34px;
+  color: rgb(218, 18, 175);
+  font-weight: 900;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  background-color:transparent;
+
+}
+QLabel#medium {
+  font-size: 18px;
+  color: white;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  background-color:transparent;
+}
+QLabel#small {
+  font-size: 14px;
+  color: white;
+  font-weight: 200;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  background-color:transparent;
+}
+QLabel#badge{
+  font-size: 12px;
+
+  font-weight: 200;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  border:none;
+  border-radius:5px;
+  padding-left:5px;
+
+
+}
+
+QLineEdit#edit{
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid black;
+  font-size: 20px;
+  color: black;
+  padding-left: 10px;
+}
+QLineEdit#edit:focus {
+  border: none;
+  border-bottom: 2px solid black;
+}
+QRadioButton::indicator {
+  width: 30px;
+  height: 30px;
+}
+QRadioButton {
+  font-size: 14px;
+  background-color: transparent;
+}
+QPushButton#sign{
+background:green;
+color:black;
+font-size:20px;
+}
+QFrame#frame{
+background-color:rgb(100, 100, 100);
+border-width:0px;
+border-radius:20px;
+}
+QPushButton#profile{
+background:rgb(60,60,60);
+border:none;
+font-size:16px;
+color:white;
+font-weight:300;
+letter-spacing:1px;
+
+}
+QPushButton#profile:hover{
+border-bottom:2px solid white;
+}
