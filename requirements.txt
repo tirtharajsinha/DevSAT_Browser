@@ -10,3 +10,4 @@ PyQtWebEngine-Qt5==5.15.2
 python-dotenv==0.17.0
 qt5-applications==5.15.2.2.1
 qt5-tools==5.15.2.1.0.1
+qtwidgets==0.18
