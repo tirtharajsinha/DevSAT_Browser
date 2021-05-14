@@ -5,7 +5,7 @@
 
 DevSAT browser is a webbrowser built with python3 and Pyqt5.<hr>
 ## browser home
-<img src="stock/photo_2021-04-15_13-33-03.jpg">
+<img src="stock/photo_2021-04-15_13-33-03.JPG">
 
 <hr>
 
