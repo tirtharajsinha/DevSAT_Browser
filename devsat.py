@@ -10,6 +10,7 @@ from qtwidgets import Toggle, AnimatedToggle
 import os
 import sys
 import sqlite3
+import requests
 
 
 # main window
@@ -41,7 +42,7 @@ class BrowserWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
 
         # loding stylesheet
-        f = open("style.css", "r")
+        f = open("static/style.css", "r")
         self.setStyleSheet(f.read())
 
         # connecting database
@@ -121,14 +122,12 @@ class BrowserWindow(QMainWindow):
         # adding line edit to tool bar
         navtb.addWidget(self.urlbar)
 
-        # similarly adding save page action
-        save_btn = QAction(self)
-        save_btn.setIcon(QIcon("static/save.png"))
-        save_btn.setStatusTip("Save current page as html")
-        # save_btn.triggered.connect(lambda: self.tabs.currentWidget().stop())
-        navtb.addAction(save_btn)
-
-        navtb.addSeparator()
+        # adding bookmark btn
+        mark_btn = QAction(self)
+        mark_btn.setIcon(QIcon("static/bookmark.png"))
+        mark_btn.setStatusTip("bookmark")
+        mark_btn.triggered.connect(lambda: self.tabs.currentWidget().stop())
+        navtb.addAction(mark_btn)
 
         # similarly adding stop action
         stop_btn = QAction(self)
@@ -139,7 +138,7 @@ class BrowserWindow(QMainWindow):
 
         navtb.addSeparator()
 
-        # adding stop action
+        # adding login action
         login_btn = QAction(self)
         # login_btn.triggered.connect(lambda: self.tabs.currentWidget().stop())
         if self.db_result[2] == "":
@@ -153,19 +152,52 @@ class BrowserWindow(QMainWindow):
 
         navtb.addSeparator()
 
+        # creating menu
+        SettingMenu = QMenu()
+        SettingMenu.setStyleSheet(
+            "background-color:rgb(41, 40, 40); width:200px; padding:20px; color:white; font-size:20px;")
+
+        # similarly adding save page action
+        save_btn = QAction(self)
+        save_btn.setIcon(QIcon("static/save.png"))
+        save_btn.setText("Save page")
+        save_btn.setStatusTip("Save current page as html")
+        save_btn.triggered.connect(self.save_file)
+        SettingMenu.addAction(save_btn)
+
+        # adding print button
+        print_btn = QAction(self)
+        print_btn.setIcon(QIcon("static/print.png"))
+        print_btn.setText("print")
+        print_btn.setStatusTip("personalize")
+        print_btn.triggered.connect(lambda: self.print())
+        SettingMenu.addAction(print_btn)
+
+        SettingMenu.addSeparator()
         # adding settings button
         settings_btn = QAction(self)
-        settings_btn.setIcon(QIcon("static/dots.png"))
+        settings_btn.setIcon(QIcon("static/setting.png"))
+        settings_btn.setText("settings")
         settings_btn.setStatusTip("personalize")
         settings_btn.triggered.connect(lambda: self.settingui())
-        navtb.addAction(settings_btn)
+        SettingMenu.addAction(settings_btn)
+
+        tool_btn = QToolButton()
+        # tb_set.clicked.connect(self.on_click_set_value)
+        tool_btn.setIcon(QIcon("static/dots.png"))
+
+        tool_btn.setMenu(SettingMenu)
+        tool_btn.setPopupMode(QToolButton.InstantPopup)
+        navtb.addWidget(tool_btn)
+
+        navtb.addSeparator()
 
         # creating first tab
         self.add_new_tab(QUrl('http://www.google.com'), 'Homepage')
 
         # showing all the components
         self.show()
-        self.setWindowIcon(QIcon("static/devsat_x.png"))
+        self.setWindowIcon(QIcon("static/devsat.png"))
         # setting window title
         self.setWindowTitle("    DEVSAT")
 
@@ -190,6 +222,7 @@ class BrowserWindow(QMainWindow):
         # setting tab index
         i = self.tabs.addTab(browser, label)
         self.tabs.setCurrentIndex(i)
+
         # link=browser.page().contextMenuData().linkUrl()
         # adding action to the browser when url is changed
         # update the url
@@ -289,6 +322,28 @@ class BrowserWindow(QMainWindow):
         # set cursor position
         self.urlbar.setCursorPosition(0)
 
+    def print(self):
+        printer = QPrinter()
+
+        painter = QtGui.QPainter()
+        # setting capture window
+        painter.begin(printer)
+        screen = self.grab()
+        painter.drawPixmap(0, 0, self.rect().height(), self.rect().width(), screen)
+        painter.end()
+
+    def save_file(self):
+        print("ok")
+        url = self.tabs.currentWidget().url().toString()
+        html = requests.get(url).text
+
+        filename, _ = QFileDialog.getSaveFileName(self, "Save Page As", "",
+                                                  "Hypertext Markup Language (*.htm *html);;"
+                                                  "All files (*.*)")
+        if filename:
+            with open(filename, 'w') as f:
+                f.write(html)
+
     def settingui(self):
         Dialog = QtWidgets.QDialog()
         ui = Ui_Dialog()
@@ -314,7 +369,7 @@ class Ui_Dialog(object):
         self.tabWidget.setStyleSheet(u"background-color:rgb(60, 60, 60); color:white;")
 
         # loading css file
-        f = open("dialog.css", "r")
+        f = open("static/dialog.css", "r")
         Dialog.setStyleSheet(f.read())
 
         # connecting database
@@ -491,7 +546,7 @@ class Ui_Dialog(object):
             self.signup.setObjectName("sign up")
             self.signup.setStyleSheet("background-color:#b3ffb3; color:black;")
             self.signup.clicked.connect(self.login)
-
+            self.signup.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
             self.feed.setStyleSheet("background-color:red; color:black;")
             self.feed.setText("logged out")
 
@@ -505,6 +560,7 @@ class Ui_Dialog(object):
             self.signout.setStyleSheet("border:1px solid white; border-radius:8px; color:white; font-size:20px;")
             self.signout.clicked.connect(self.logout)
             self.feed.setStyleSheet("background-color:green; color:black;")
+            self.signout.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
             self.feed.setText("logged in")
 
         self.label = QtWidgets.QLabel(self.tab_2)
@@ -557,8 +613,48 @@ class Ui_Dialog(object):
         self.label0.setText("Privacy & Services")
         self.label0.setObjectName("head")
 
+        # privacy logo
+        self.prilogo = QtWidgets.QLabel(self.privacy)
+        self.prilogo.setGeometry(50, 80, 170, 100)
+        self.prilogo.setAutoFillBackground(False)
+        self.prilogo.setText("")
+        self.prilogo.setPixmap(QtGui.QPixmap("static/privacy.png"))
+        self.prilogo.setScaledContents(True)
+        self.prilogo.setWordWrap(False)
+        self.prilogo.setOpenExternalLinks(False)
+        self.prilogo.setObjectName("devsat logo")
+
+        # promice label
+        name = self.db_result[1].split()
+        self.abtpri = QtWidgets.QLabel(self.privacy)
+        self.abtpri.setGeometry(210, 100, 500, 30)
+        self.abtpri.setObjectName("settings")
+        self.abtpri.setText("Hey " + name[0] + ", We value your privacy.")
+        self.abtpri.setObjectName("head")
+        self.abtpri.setStyleSheet("color:white; letter-spacing:1px; font-size:22px;")
+
+        # policy version
+        self.policy = QtWidgets.QLabel(self.privacy)
+        self.policy.setGeometry(210, 130, 500, 60)
+        self.policy.setObjectName("settings")
+        self.policy.setText(
+            "We will always protect and respect your privacy,\nwhile giving you the transparency and control you deserve.")
+        self.policy.setObjectName("small")
+        self.policy.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
+
+        # privacy logo
+        self.track = QtWidgets.QLabel(self.privacy)
+        self.track.setGeometry(100, 200, 600, 250)
+        self.track.setAutoFillBackground(False)
+        self.track.setText("")
+        self.track.setPixmap(QtGui.QPixmap("static/policy.JPG"))
+        self.track.setScaledContents(True)
+        self.track.setWordWrap(False)
+        self.track.setOpenExternalLinks(False)
+        self.track.setObjectName("devsat logo")
+
         # pushing privacy to widget
-        self.tabWidget.addTab(self.privacy, "Privacy & Services")
+        self.tabWidget.addTab(self.privacy, "Privacy Services")
 
         # about page
         self.about = QtWidgets.QWidget()
@@ -668,7 +764,7 @@ class ui_winlog(object):
         dialog.setWindowTitle("Sign-in")
         dialog.setWindowIcon(QIcon("static/user-green.png"))
 
-        f = open("login.css", "r")
+        f = open("static/login.css", "r")
 
         dialog.setStyleSheet(f.read())
         dialog.setObjectName("head")
@@ -759,7 +855,7 @@ class ui_winlog(object):
                     self.feed.setStyleSheet("  background-color: yellowgreen;")
                     self.feed.setText("register Now")
                 else:
-                    print("done")
+
                     cred = conn.execute("select * from admin where id=1")
                     res = cred.fetchall()[0]
                     if res[2] == data["email"] and res[3] == data["passward"]:

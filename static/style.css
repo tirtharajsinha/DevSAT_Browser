@@ -1,0 +1,63 @@
+QAction {
+  margin-left: 15px;
+
+}
+
+QToolBar {
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: rgb(41, 40, 40);
+}
+
+
+QLineEdit {
+  height: 40px;
+  font-size: 18px;
+
+  background-repeat: none;
+  background-position: left;
+  padding-left: 35px;
+  margin-left: 10px;
+  margin-right: 10px;
+  background-color: rgb(41, 40, 40);
+  color: white;
+}
+QMainWindow {
+  background-color: rgb(50, 50, 50);
+}
+QTabWidget {
+  border: 0px solid black;
+  text-align: left;
+}
+
+QTabBar {
+  background: #222;
+  color: #666;
+  border-width: 0;
+  text-align: left;
+}
+QTabBar::tab:top {
+  height: 40px;
+  min-width: 200px;
+  max-width: 300px;
+  font-size: 14px;
+  text-align: left;
+}
+
+QTabBar::tab:top:selected {
+  background-color: black;
+  color: white;
+}
+QTabBar::tab:top:!selected {
+  color: black;
+}
+
+QTabBar::tab:top:hover {
+  color: rgb(214, 24, 198);
+}
+QTabBar::close-button {
+  image: url(static/close1.png);
+}
+QTabBar::close-button:hover {
+  image: url(static/close1-hover.png);
+}

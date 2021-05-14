@@ -1,4 +1,15 @@
+altgraph==0.17
+certifi==2020.12.5
+chardet==4.0.0
 click==7.1.2
+cx-Freeze==6.6
+cx-Logging==3.0
+future==0.18.2
+idna==2.10
+importlib-metadata==3.10.1
+pefile==2019.4.18
+pyinstaller==4.2
+pyinstaller-hooks-contrib==2021.1
 PyQt5==5.15.4
 pyqt5-plugins==5.15.2.2.1.0
 PyQt5-Qt5==5.15.2
@@ -8,6 +19,10 @@ pyqt5-tools==5.15.2.3.0.2
 PyQtWebEngine==5.15.4
 PyQtWebEngine-Qt5==5.15.2
 python-dotenv==0.17.0
+pywin32-ctypes==0.2.0
 qt5-applications==5.15.2.2.1
 qt5-tools==5.15.2.1.0.1
 qtwidgets==0.18
+requests==2.25.1
+urllib3==1.26.4
+zipp==3.4.1
