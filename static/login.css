@@ -4,8 +4,8 @@ QDialog {
     y1: 0,
     x2: 0,
     y2: 1,
-    stop: 0 #66ffcc,
-    stop: 1 #006666
+    stop: 0 #66ffff,
+    stop: 1 #3399ff
   );
 }
 QPushButton#btn1 {
