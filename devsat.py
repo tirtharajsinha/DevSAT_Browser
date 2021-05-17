@@ -690,7 +690,7 @@ class Ui_Dialog(object):
         self.version = QtWidgets.QLabel(self.about)
         self.version.setGeometry(100, 110, 500, 20)
         self.version.setObjectName("settings")
-        self.version.setText("Version Beta-1.0.0.2 (Official build) (64-bit)")
+        self.version.setText("Version beta V-1.0.1.3  (Official build) (64-bit)")
         self.version.setObjectName("head")
         self.version.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
@@ -758,9 +758,9 @@ class Ui_Dialog(object):
 class ui_winlog(object):
 
     def __init__(self, dialog):
-        dialog.setGeometry(200, 200, 500, 800)
+        dialog.setGeometry(200, 200, 500, 650)
         dialog.setFixedWidth(500)
-        dialog.setFixedHeight(800)
+        dialog.setFixedHeight(650)
         dialog.setWindowTitle("Sign-in")
         dialog.setWindowIcon(QIcon("static/user-green.png"))
 
@@ -808,14 +808,14 @@ class ui_winlog(object):
 
         # radio option1
         self.radiobtn1 = QRadioButton(dialog)
-        self.radiobtn1.setGeometry(100, 550, 100, 20)
+        self.radiobtn1.setGeometry(100, 500, 100, 20)
         self.radiobtn1.setText("Sign-in")
         self.radiobtn1.adjustSize()
         self.radiobtn1.setChecked(True)
 
         # radio option2
         self.radiobtn2 = QRadioButton(dialog)
-        self.radiobtn2.setGeometry(300, 550, 100, 20)
+        self.radiobtn2.setGeometry(300, 500, 100, 20)
         self.radiobtn2.setText("Register")
         self.radiobtn2.adjustSize()
 
@@ -823,13 +823,13 @@ class ui_winlog(object):
         self.b1 = QtWidgets.QPushButton(dialog)
         self.b1.setText("SUBMIT")
         self.b1.setObjectName("btn1")
-        self.b1.move(190, 650)
+        self.b1.move(190, 550)
         self.b1.adjustSize()
         self.b1.clicked.connect(self.submit)
 
         # feedback lable
         self.feed = QLabel(dialog)
-        self.feed.setGeometry(0, 750, 500, 50)
+        self.feed.setGeometry(0, 600, 500, 50)
         self.feed.setText("")
         self.feed.setObjectName("feedback")
 
