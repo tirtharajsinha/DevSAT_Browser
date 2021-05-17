@@ -1,7 +1,7 @@
 
 <img src="static/devsat_x.png" width='100px' height="100px">
 
-# DevSAT_Browser V:1.0.1.4 LTE 
+# DevSAT_Browser V:1.0.1.4 LTS
 
 
 DevSAT browser is a webbrowser built with python3 and Pyqt5.<hr>
