@@ -711,7 +711,7 @@ class Ui_Dialog(object):
         self.version = QtWidgets.QLabel(self.about)
         self.version.setGeometry(100, 110, 500, 20)
         self.version.setObjectName("settings")
-        self.version.setText("Version V:1.0.1.4 LTE (Official build) (64-bit)")
+        self.version.setText("Version V:1.0.1.4 LTS (Official build) (64-bit)")
         self.version.setObjectName("head")
         self.version.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
