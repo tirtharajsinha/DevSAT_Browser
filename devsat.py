@@ -12,6 +12,7 @@ import sys
 import sqlite3
 import requests
 import datetime
+import time
 
 
 # main window
@@ -711,7 +712,7 @@ class Ui_Dialog(object):
         self.version = QtWidgets.QLabel(self.about)
         self.version.setGeometry(100, 110, 500, 20)
         self.version.setObjectName("settings")
-        self.version.setText("Version V:1.0.1.4 LTS (Official build) (64-bit)")
+        self.version.setText("Version V:1.0.0.4 LTS (Official build) (64-bit)")
         self.version.setObjectName("head")
         self.version.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
@@ -905,6 +906,7 @@ class ui_winlog(object):
         self.b1.move(690, 450)
         self.b1.adjustSize()
         self.b1.clicked.connect(self.submit)
+        self.b1.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
         #
         # feedback lable
         self.feed = QLabel(dialog)
@@ -977,11 +979,51 @@ class ui_winlog(object):
         #     self.feed.setText("success")
 
 
+class welcome(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        # <MainWindow Properties>
+        self.setFixedSize(600, 400)
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+
+        self.bg=QLabel(self)
+        self.bg.setGeometry(0,0,600,400)
+        self.bg.setStyleSheet("background-image:url('static/welcomebg.jpg')")
+
+
+        self.image = QtWidgets.QLabel(self)
+        self.image.setGeometry(150, 130, 300, 210)
+        self.image.setAutoFillBackground(False)
+        self.image.setText("")
+        self.image.setPixmap(QtGui.QPixmap("static/devsat.png"))
+        self.image.setScaledContents(True)
+        self.image.setWordWrap(False)
+        self.image.setOpenExternalLinks(False)
+        self.image.setObjectName("image")
+        self.image.setStyleSheet("background-image:None;")
+
+        bar = QProgressBar(self)
+        x=25
+        # setting geometry to progress bar
+        bar.setGeometry(0, 390, 650, 10)
+        # setting value to progress bar
+        bar.setValue(x)
+        self.show()
+        for i in range(3):
+            x += 25
+
+            bar.setValue(x)
+            time.sleep(1)
+        self.close()
+
+
 # creating a PyQt5 application
 app = QApplication(sys.argv)
 
 # setting name to the application
-
+welcome = welcome()
 
 # creating MainWindow object
 window = BrowserWindow()
