@@ -11,6 +11,7 @@ import os
 import sys
 import sqlite3
 import requests
+import datetime
 
 
 # main window
@@ -202,17 +203,20 @@ class BrowserWindow(QMainWindow):
         self.setWindowTitle("    DEVSAT")
 
     # method for adding new tab
-    def add_new_tab(self, qurl=None, label="Blank"):
+    def add_new_tab(self, qurl="None", label="Blank"):
 
         # if url is blank
-        db_res = self.conn.execute("select * from devsat where id=1")
-        result = db_res.fetchall()
-        self.db_result = result[0]
-        if self.db_result[4] == "google":
-            qurl = QUrl('http://www.google.com')
+        if qurl == "None":
+            db_res = self.conn.execute("select * from devsat where id=1")
+            result = db_res.fetchall()
+            self.db_result = result[0]
+            if self.db_result[4] == "google":
+                qurl = QUrl('http://www.google.com')
+            else:
+                qurl = QUrl('http://www.bing.com')
         else:
-            qurl = QUrl('http://www.bing.com')
 
+            qurl = QUrl(qurl)
         # creating a QWebEngineView object
         browser = QWebEngineView()
 
@@ -233,6 +237,8 @@ class BrowserWindow(QMainWindow):
         # set the tab title
         browser.loadFinished.connect(lambda _, i=i, browser=browser:
                                      self.tabs.setTabText(i, browser.page().title()))
+
+        browser.loadFinished.connect(lambda: self.savehistory(browser.page().url(), browser.page().title()))
 
     # when double clicked is pressed on tabs
     def tab_open_doubleclick(self, i):
@@ -304,7 +310,7 @@ class BrowserWindow(QMainWindow):
         # if scheme is blank
         if q.scheme() == "":
             # set scheme
-            q.setScheme("http")
+            q.setScheme("https")
 
         # set the url
         self.tabs.currentWidget().setUrl(q)
@@ -321,6 +327,21 @@ class BrowserWindow(QMainWindow):
 
         # set cursor position
         self.urlbar.setCursorPosition(0)
+
+    def savehistory(self, url, title):
+
+        url = url.toString()
+
+        restricted = ["http://www.google.com", "https://www.google.com/", "http://www.bing.com",
+                      "https://www.bing.com/"]
+        # storing history
+
+        if url not in restricted:
+            # print(url)
+            # print(title)
+            date = str(datetime.datetime.now().date())
+            self.conn.execute("insert into history values('{}','{}','{}')".format(title, url, date))
+            self.conn.commit()
 
     def print(self):
         printer = QPrinter()
@@ -347,7 +368,7 @@ class BrowserWindow(QMainWindow):
     def settingui(self):
         Dialog = QtWidgets.QDialog()
         ui = Ui_Dialog()
-        ui.setupUi(Dialog)
+        ui.setupUi(Dialog, self)
         Dialog.show()
         Dialog.exec_()
 
@@ -356,18 +377,18 @@ class BrowserWindow(QMainWindow):
 
 
 class Ui_Dialog(object):
-    def setupUi(self, Dialog):
+    def setupUi(self, Dialog, browser):
         Dialog.setObjectName("Dialog")
         Dialog.resize(1000, 600)
         Dialog.setMinimumSize(800, 600)
         Dialog.setWindowTitle("SETTINGS")
         Dialog.setWindowIcon(QIcon("static/settings.png"))
         self.tabWidget = QtWidgets.QTabWidget(Dialog)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 100, 800, 500))
+        self.tabWidget.setGeometry(QtCore.QRect(0, 100, 1000, 500))
         self.tabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.tabWidget.setObjectName("tabWidget")
         self.tabWidget.setStyleSheet(u"background-color:rgb(60, 60, 60); color:white;")
-
+        self.browser = browser
         # loading css file
         f = open("static/dialog.css", "r")
         Dialog.setStyleSheet(f.read())
@@ -690,7 +711,7 @@ class Ui_Dialog(object):
         self.version = QtWidgets.QLabel(self.about)
         self.version.setGeometry(100, 110, 500, 20)
         self.version.setObjectName("settings")
-        self.version.setText("Version beta V-1.0.1.3  (Official build) (64-bit)")
+        self.version.setText("Version alpha-V:1.0.0.4 (Official build) (64-bit)")
         self.version.setObjectName("head")
         self.version.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
@@ -713,6 +734,49 @@ class Ui_Dialog(object):
         # pushing privacy to widget
         self.tabWidget.addTab(self.about, "About DevSAT")
 
+        # building history page
+        self.history = QtWidgets.QWidget()
+        self.history.setObjectName("devsat")
+
+        # adding heading
+        self.hislabel = QtWidgets.QLabel(self.history)
+        self.hislabel.setGeometry(50, 20, 300, 40)
+        self.hislabel.setObjectName("label")
+        self.hislabel.setText("History")
+        self.hislabel.setObjectName("head")
+
+        # scroll bar
+        history = self.conn.execute("select * from history;")
+        result = history.fetchall()
+        formLayout = QFormLayout()
+        groupBox = QGroupBox("Your last 7 days history")
+        result = result[-1::-1]
+        for data in result:
+            delhis = QPushButton(data[0])
+            delhis.setStyleSheet("font-size:18px; color:cyan; padding:10px;")
+            delhis.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+            url = data[1]
+            date = QLabel(data[2])
+
+            delhis.clicked.connect(lambda x, url=url: self.openhist(url))
+            formLayout.addRow(delhis, date)
+
+        groupBox.setLayout(formLayout)
+        scroll = QScrollArea()
+        scroll.setWidget(groupBox)
+        scroll.setWidgetResizable(True)
+        scroll.setFixedHeight(400)
+        self.frame2 = QtWidgets.QFrame(self.history)
+        self.frame2.setGeometry(50, 80, 800, 350)
+        self.frame2.setObjectName("frame2")
+
+        layout = QVBoxLayout(self.frame2)
+
+        layout.addWidget(scroll)
+
+        # pushing history to widget
+        self.tabWidget.addTab(self.history, "history")
+
         # self.retranslateUi(Dialog)
         self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -723,6 +787,10 @@ class Ui_Dialog(object):
         self.tabWidget.setTabIcon(1, QIcon("static/profile.png"))
         self.tabWidget.setTabIcon(2, QIcon("static/shild.png"))
         self.tabWidget.setTabIcon(3, QIcon("static/devsat1.png"))
+
+    def openhist(self, url):
+
+        self.browser.add_new_tab(qurl=url)
 
     def settab(self):
 
@@ -743,7 +811,7 @@ class Ui_Dialog(object):
         self.conn.commit()
 
     def login(self):
-        print("login")
+
         winlog = QtWidgets.QDialog()
         ui = ui_winlog(winlog)
 
@@ -843,14 +911,14 @@ class ui_winlog(object):
         data["passward"] = self.passinput.text()
         if self.radiobtn1.isChecked():
             data["action"] = "sign-in"
-            print(1)
+
             if data["username"] == "" or data["passward"] == "":
                 self.feed.setStyleSheet("  background-color: yellowgreen;")
                 self.feed.setText("Crendtial error")
             else:
                 db_res = conn.execute("select * from admin")
                 result = db_res.fetchall()
-                print(len(result))
+
                 if len(result) == 0:
                     self.feed.setStyleSheet("  background-color: yellowgreen;")
                     self.feed.setText("register Now")
