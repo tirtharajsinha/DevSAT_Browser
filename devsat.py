@@ -711,7 +711,7 @@ class Ui_Dialog(object):
         self.version = QtWidgets.QLabel(self.about)
         self.version.setGeometry(100, 110, 500, 20)
         self.version.setObjectName("settings")
-        self.version.setText("Version alpha-V:1.0.0.4 (Official build) (64-bit)")
+        self.version.setText("Version V:1.0.1.4 LTE (Official build) (64-bit)")
         self.version.setObjectName("head")
         self.version.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
@@ -826,9 +826,9 @@ class Ui_Dialog(object):
 class ui_winlog(object):
 
     def __init__(self, dialog):
-        dialog.setGeometry(200, 200, 500, 650)
-        dialog.setFixedWidth(500)
-        dialog.setFixedHeight(650)
+        dialog.setGeometry(200, 200, 1000, 600)
+        # dialog.setFixedWidth(500)
+        # dialog.setFixedHeight(650)
         dialog.setWindowTitle("Sign-in")
         dialog.setWindowIcon(QIcon("static/user-green.png"))
 
@@ -840,9 +840,13 @@ class ui_winlog(object):
         self.initui(dialog)
 
     def initui(self, dialog):
+        pass
+        self.leftf = QtWidgets.QLabel(dialog)
+        self.leftf.setGeometry(0, 0, 500, 600)
+        self.leftf.setStyleSheet("background-image:url('static/loginbg.jpg');")
         # head image
         self.image = QtWidgets.QLabel(dialog)
-        self.image.setGeometry(140, 20, 240, 180)
+        self.image.setGeometry(120, 150, 260, 190)
         self.image.setAutoFillBackground(False)
         self.image.setText("")
         self.image.setPixmap(QtGui.QPixmap("static/devsat.png"))
@@ -851,53 +855,60 @@ class ui_winlog(object):
         self.image.setOpenExternalLinks(False)
         self.image.setObjectName("image")
 
-        # heading text
+        # # heading text
         self.head = QtWidgets.QLabel(dialog)
-        self.head.move(180, 200)
-        self.head.setText("welcome")
+        self.head.move(90, 380)
+        self.head.setText("WELCOME BACK")
         self.head.setObjectName("head")
         self.head.adjustSize()
 
+        # # heading text right
+        self.headr = QtWidgets.QLabel(dialog)
+        self.headr.move(590, 50)
+        self.headr.setText("Sign in/Sign up")
+        self.headr.setObjectName("headr")
+        self.headr.adjustSize()
+
         # input fields
         self.nameinput = QLineEdit(dialog)
-        self.nameinput.setGeometry(50, 280, 400, 50)
+        self.nameinput.setGeometry(550, 180, 400, 50)
         self.nameinput.setPlaceholderText(" UserName")
 
         # input email
         self.emailinput = QLineEdit(dialog)
-        self.emailinput.setGeometry(50, 350, 400, 50)
+        self.emailinput.setGeometry(550, 250, 400, 50)
         self.emailinput.setPlaceholderText(" Email")
-
+        #
         # input password
         self.passinput = QLineEdit(dialog)
-        self.passinput.setGeometry(50, 420, 400, 50)
+        self.passinput.setGeometry(550, 320, 400, 50)
         self.passinput.setPlaceholderText(" password")
         self.passinput.setEchoMode(QLineEdit.Password)
-
+        #
         # radio option1
         self.radiobtn1 = QRadioButton(dialog)
-        self.radiobtn1.setGeometry(100, 500, 100, 20)
+        self.radiobtn1.setGeometry(600, 400, 100, 20)
         self.radiobtn1.setText("Sign-in")
         self.radiobtn1.adjustSize()
         self.radiobtn1.setChecked(True)
 
         # radio option2
         self.radiobtn2 = QRadioButton(dialog)
-        self.radiobtn2.setGeometry(300, 500, 100, 20)
+        self.radiobtn2.setGeometry(800, 400, 100, 20)
         self.radiobtn2.setText("Register")
         self.radiobtn2.adjustSize()
-
+        #
         # submit button
         self.b1 = QtWidgets.QPushButton(dialog)
         self.b1.setText("SUBMIT")
         self.b1.setObjectName("btn1")
-        self.b1.move(190, 550)
+        self.b1.move(690, 450)
         self.b1.adjustSize()
         self.b1.clicked.connect(self.submit)
-
+        #
         # feedback lable
         self.feed = QLabel(dialog)
-        self.feed.setGeometry(0, 600, 500, 50)
+        self.feed.setGeometry(500, 550, 500, 50)
         self.feed.setText("")
         self.feed.setObjectName("feedback")
 

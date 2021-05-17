@@ -1,12 +1,5 @@
 QDialog {
-  background: qlineargradient(
-    x1: 0,
-    y1: 0,
-    x2: 0,
-    y2: 1,
-    stop: 0 #66ffcc,
-    stop: 1 #006666
-  );
+  background-color:white;
 }
 QPushButton#btn1 {
   background-color: black;
@@ -27,9 +20,23 @@ QLabel#head {
   color: rgb(218, 18, 175);
   font-weight: 900;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-  text-decoration: underline;
+  color:cyan;
+  background-color:rgb(59, 59, 59);
+  padding:15px;
+  border-radius:35px;
+
+}
+QLabel#headr {
+  font-size: 40px;
+  color: rgb(218, 18, 175);
+  font-weight: 900;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  color:rgb(142, 230, 119);
+
+
 }
 QLabel#feedback {
+
   font-size: 20px;
   padding-left: 200px;
 }
