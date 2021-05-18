@@ -16,10 +16,9 @@ setup(
     options=options,
     executables=executables,
 )
-# instruction 
-# install cs_freeze with 
-...
-pip install cx-Freeze
-...
+# instruction to get .exe
 
-# python setup.py build
+# 1) install cs_freeze with  "pip install cx-Freeze"
+
+
+# 2) run command in terminal "python setup.py build"
