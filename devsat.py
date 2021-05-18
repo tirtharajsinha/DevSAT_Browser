@@ -8,6 +8,7 @@ from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtPrintSupport import *
 from qtwidgets import Toggle, AnimatedToggle
 import os
+import random
 import sys
 import sqlite3
 import requests
@@ -844,7 +845,9 @@ class ui_winlog(object):
         pass
         self.leftf = QtWidgets.QLabel(dialog)
         self.leftf.setGeometry(0, 0, 500, 600)
-        self.leftf.setStyleSheet("background-image:url('static/loginbg.jpg');")
+        loginbg = ["loginbg.jpg", "loginbg2.jpg", "loginbg3.jpg", "loginbg4.jpg"]
+        bg = random.randint(0, 3)
+        self.leftf.setStyleSheet("background-image:url('static/{}');".format(loginbg[bg]))
         # head image
         self.image = QtWidgets.QLabel(dialog)
         self.image.setGeometry(120, 150, 260, 190)
@@ -988,10 +991,9 @@ class welcome(QMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
 
-        self.bg=QLabel(self)
-        self.bg.setGeometry(0,0,600,400)
+        self.bg = QLabel(self)
+        self.bg.setGeometry(0, 0, 600, 400)
         self.bg.setStyleSheet("background-image:url('static/welcomebg.jpg')")
-
 
         self.image = QtWidgets.QLabel(self)
         self.image.setGeometry(150, 130, 300, 210)
@@ -1005,7 +1007,7 @@ class welcome(QMainWindow):
         self.image.setStyleSheet("background-image:None;")
 
         bar = QProgressBar(self)
-        x=25
+        x = 25
         # setting geometry to progress bar
         bar.setGeometry(0, 390, 650, 10)
         # setting value to progress bar
