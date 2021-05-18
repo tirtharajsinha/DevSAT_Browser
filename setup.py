@@ -16,5 +16,10 @@ setup(
     options=options,
     executables=executables,
 )
+# instruction 
+# install cs_freeze with 
+...
+pip install cx-Freeze
+...
 
 # python setup.py build
