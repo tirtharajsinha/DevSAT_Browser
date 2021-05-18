@@ -729,7 +729,7 @@ class Ui_Dialog(object):
         self.team = QtWidgets.QLabel(self.about)
         self.team.setGeometry(600, 400, 300, 20)
         self.team.setObjectName("settings")
-        self.team.setText("- Built By DevSAT Team")
+        self.team.setText("- Built By Tirtharaj Sinha(From DevSAT Team)")
         self.team.setObjectName("small")
         self.team.setStyleSheet("color:cyan; font-size:18px")
 
