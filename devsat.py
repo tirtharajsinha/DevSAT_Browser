@@ -343,7 +343,7 @@ class BrowserWindow(QMainWindow):
             # print(url)
             # print(title)
             date = str(datetime.datetime.now().date())
-            self.conn.execute("insert into history values('{}','{}','{}')".format(title, url, date))
+            self.conn.execute("insert into history values(null,'{}','{}','{}')".format(title, url, date))
             self.conn.commit()
 
     def print(self):
@@ -718,7 +718,7 @@ class Ui_Dialog(object):
         self.version = QtWidgets.QLabel(self.about)
         self.version.setGeometry(100, 110, 500, 20)
         self.version.setObjectName("settings")
-        self.version.setText("Version V:1.0.1.4 LTS (Official build) (64-bit)")
+        self.version.setText("Version V:1.0.2.1 LTS (Official build) (64-bit)")
         self.version.setObjectName("head")
         self.version.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
@@ -752,48 +752,69 @@ class Ui_Dialog(object):
         self.hislabel.setText("History")
         self.hislabel.setObjectName("head")
 
+
+
         # scroll bar
         history = self.conn.execute("select * from history;")
         result = history.fetchall()
-        formLayout = QFormLayout()
+        self.formLayout = QFormLayout()
         groupBox = QGroupBox("Your last 7 days history")
-        result = result[-1::-1]
+        if len(result) > 1:
+            result = result[-1::-1]
+        rowcount = 0
         for data in result:
-            widget = QWidget()
-            layout_h = QHBoxLayout(widget)
+            rowcount += 1
 
-            his = QPushButton("  " + data[0])
+            url = data[2]
+            title = data[1]
+            if len(title) > 15:
+                title = title[:15]
+            his = QPushButton("  " + title)
             his.setIcon(QIcon("static/external-link.png"))
-            his.setStyleSheet("font-size:18px; color:cyan; padding:10px;")
+            his.setStyleSheet("font-size:18px; color:yellowgreen; padding:10px;")
             his.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+            his.clicked.connect(lambda x, url=url: self.openhist(url))
 
-            url = data[1]
-            date = QLabel(data[2])
+            date = QLabel(data[3])
             date.setStyleSheet("font-size:18px; color:white; padding-top:10px;")
 
+            id = data[0]
             delhis = QPushButton(" Clear history ")
-            delhis.setStyleSheet("font-size:18px; color:yellowgreen; padding:10px;")
+            delhis.setStyleSheet("font-size:18px; color:red; padding:10px;")
             delhis.setIcon(QIcon("static/trash.png"))
             delhis.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+            delhis.clicked.connect(lambda x, id=id, rowcount=rowcount: self.delhist(id, rowcount))
 
+            widget = QWidget()
+            layout_h = QHBoxLayout(widget)
             layout_h.addWidget(his)
             layout_h.addWidget(delhis)
+            self.formLayout.addRow(date, widget)
 
-            his.clicked.connect(lambda x, url=url: self.openhist(url))
-            formLayout.addRow(date, widget)
-
-        groupBox.setLayout(formLayout)
+        groupBox.setLayout(self.formLayout)
         scroll = QScrollArea()
         scroll.setWidget(groupBox)
         scroll.setWidgetResizable(True)
-        scroll.setFixedHeight(400)
+        scroll.setFixedHeight(350)
         self.frame2 = QtWidgets.QFrame(self.history)
-        self.frame2.setGeometry(50, 80, 800, 350)
+        self.frame2.setGeometry(50, 80, 800, 360)
         self.frame2.setObjectName("frame2")
 
         layout = QVBoxLayout(self.frame2)
 
         layout.addWidget(scroll)
+
+        # adding cleare all butten
+
+        self.cls = QPushButton(self.history)
+        self.cls.setText(" clear all")
+        self.cls.setIcon(QIcon("static/trash.png"))
+        self.cls.setGeometry(640, 30, 200, 40)
+        # self.cls.setStyleSheet("font-size:18px; color:red; padding:10px;")
+        self.cls.setStyleSheet("QPushButton::hover{background-color:red;color:white;font-size:18px;padding:10px;}")
+        self.cls.setObjectName("clearall")
+        self.cls.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+        self.cls.clicked.connect(lambda x, rowcount=rowcount: self.clsall(rowcount))
 
         # pushing history to widget
         self.tabWidget.addTab(self.history, "history")
@@ -809,9 +830,29 @@ class Ui_Dialog(object):
         self.tabWidget.setTabIcon(2, QIcon("static/shild.png"))
         self.tabWidget.setTabIcon(3, QIcon("static/devsat1.png"))
 
+        self.thiswindow = Dialog
+
     def openhist(self, url):
 
         self.browser.add_new_tab(qurl=url)
+
+    def delhist(self, id, rowcount):
+        try:
+            self.conn.execute("delete from history where id ={}".format(id))
+            self.conn.commit()
+            self.formLayout.removeRow(rowcount - 1)
+        except Exception as e:
+            pass
+
+    def clsall(self, rowcount):
+        try:
+            self.conn.execute("delete from history;")
+            self.conn.commit()
+            for i in range(rowcount):
+                self.formLayout.removeRow(i)
+                print(i)
+        except:
+            pass
 
     def settab(self):
 
