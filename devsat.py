@@ -14,6 +14,7 @@ import sqlite3
 import requests
 import datetime
 import time
+import io
 
 
 # main window
@@ -356,16 +357,20 @@ class BrowserWindow(QMainWindow):
         painter.end()
 
     def save_file(self):
-        print("ok")
+
         url = self.tabs.currentWidget().url().toString()
+
         html = requests.get(url).text
 
         filename, _ = QFileDialog.getSaveFileName(self, "Save Page As", "",
                                                   "Hypertext Markup Language (*.htm *html);;"
                                                   "All files (*.*)")
-        if filename:
-            with open(filename, 'w') as f:
-                f.write(html)
+        try:
+            if filename:
+                with io.open(filename, "w", encoding="utf-8") as f:
+                    f.write(html)
+        except Exception as e:
+            print(e)
 
     def settingui(self):
         Dialog = QtWidgets.QDialog()
@@ -713,7 +718,7 @@ class Ui_Dialog(object):
         self.version = QtWidgets.QLabel(self.about)
         self.version.setGeometry(100, 110, 500, 20)
         self.version.setObjectName("settings")
-        self.version.setText("Version V:1.0.0.4 LTS (Official build) (64-bit)")
+        self.version.setText("Version V:1.0.1.4 LTS (Official build) (64-bit)")
         self.version.setObjectName("head")
         self.version.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
@@ -729,7 +734,7 @@ class Ui_Dialog(object):
         self.team = QtWidgets.QLabel(self.about)
         self.team.setGeometry(600, 400, 300, 20)
         self.team.setObjectName("settings")
-        self.team.setText("- Built By Tirtharaj Sinha(From DevSAT Team)")
+        self.team.setText("- Built By DevSAT Team")
         self.team.setObjectName("small")
         self.team.setStyleSheet("color:cyan; font-size:18px")
 
@@ -754,14 +759,28 @@ class Ui_Dialog(object):
         groupBox = QGroupBox("Your last 7 days history")
         result = result[-1::-1]
         for data in result:
-            delhis = QPushButton(data[0])
-            delhis.setStyleSheet("font-size:18px; color:cyan; padding:10px;")
-            delhis.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+            widget = QWidget()
+            layout_h = QHBoxLayout(widget)
+
+            his = QPushButton("  " + data[0])
+            his.setIcon(QIcon("static/external-link.png"))
+            his.setStyleSheet("font-size:18px; color:cyan; padding:10px;")
+            his.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+
             url = data[1]
             date = QLabel(data[2])
+            date.setStyleSheet("font-size:18px; color:white; padding-top:10px;")
 
-            delhis.clicked.connect(lambda x, url=url: self.openhist(url))
-            formLayout.addRow(delhis, date)
+            delhis = QPushButton(" Clear history ")
+            delhis.setStyleSheet("font-size:18px; color:yellowgreen; padding:10px;")
+            delhis.setIcon(QIcon("static/trash.png"))
+            delhis.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+
+            layout_h.addWidget(his)
+            layout_h.addWidget(delhis)
+
+            his.clicked.connect(lambda x, url=url: self.openhist(url))
+            formLayout.addRow(date, widget)
 
         groupBox.setLayout(formLayout)
         scroll = QScrollArea()
