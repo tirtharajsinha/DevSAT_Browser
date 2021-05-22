@@ -807,9 +807,9 @@ class Ui_Dialog(object):
         # adding cleare all butten
 
         self.cls = QPushButton(self.history)
-        self.cls.setText(" clear browsing data")
+        self.cls.setText(" clear all")
         self.cls.setIcon(QIcon("static/trash.png"))
-        self.cls.setGeometry(620, 30, 220, 40)
+        self.cls.setGeometry(640, 30, 200, 40)
         # self.cls.setStyleSheet("font-size:18px; color:red; padding:10px;")
         self.cls.setStyleSheet("QPushButton::hover{background-color:red;color:white;font-size:18px;padding:10px;}")
         self.cls.setObjectName("clearall")
