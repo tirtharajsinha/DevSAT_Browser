@@ -1,13 +1,5 @@
-click==7.1.2
-PyQt5==5.15.4
-pyqt5-plugins==5.15.2.2.1.0
-PyQt5-Qt5==5.15.2
-PyQt5-sip==12.8.1
-PyQt5-stubs==5.15.2.0
-pyqt5-tools==5.15.2.3.0.2
+PyQt5
+pyqt5-tools
 PyQtWebEngine==5.15.4
-PyQtWebEngine-Qt5==5.15.2
-python-dotenv==0.17.0
-qt5-applications==5.15.2.2.1
-qt5-tools==5.15.2.1.0.1
 qtwidgets==0.18
+requests
