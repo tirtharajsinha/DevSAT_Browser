@@ -17,7 +17,7 @@ import time
 import io
 import webbrowser
 
-build_version = "Version V:1.0.3.2-featured (Official build) (64-bit)"
+build_version = "Version V:1.0.3.4 LTS (Official build) (64-bit)"
 
 
 # main window
