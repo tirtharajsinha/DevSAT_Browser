@@ -307,6 +307,9 @@ class BrowserWindow(QMainWindow):
             return
 
         # else remove the tab
+        rwidget = self.tabs.widget(i)
+        if rwidget:
+            rwidget.deleteLater()
         self.tabs.removeTab(i)
 
     # method for updating the title
