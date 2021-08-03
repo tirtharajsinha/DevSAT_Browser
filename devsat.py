@@ -17,7 +17,8 @@ import time
 import io
 import webbrowser
 
-build_version="Version V:1.0.3.2-featured (Official build) (64-bit)"
+build_version = "Version V:1.0.3.2-featured (Official build) (64-bit)"
+
 
 # main window
 class BrowserWindow(QMainWindow):
@@ -440,15 +441,14 @@ class BrowserWindow(QMainWindow):
             try:
                 initDownPath = os.path.join(os.getenv('USERPROFILE'), 'Downloads')
                 my_dir = QFileDialog.getExistingDirectory(
-                self,
-                "select a download location",
-                initDownPath,
-                QFileDialog.ShowDirsOnly
-            )
+                    self,
+                    "select a download location",
+                    initDownPath,
+                    QFileDialog.ShowDirsOnly
+                )
             except:
                 pass
 
-            
             # my_dir = my_dir.replace("/", "\\")
             # if my_dir[-1] != "\\":
             #     my_dir = my_dir + "\\" + item.downloadFileName()
@@ -459,11 +459,10 @@ class BrowserWindow(QMainWindow):
             # item.setPath(my_dir)
             print('downloading to', item.path())
             item.accept()
-            self.down.setText("downloaded... "+item.downloadFileName())
-            
+            self.down.setText("downloaded... " + item.downloadFileName())
 
-            fpath="/".join(str(item.path()).split("/")[:-1])
-            self.openpath=fpath
+            fpath = "/".join(str(item.path()).split("/")[:-1])
+            self.openpath = fpath
             item.finished.connect(self.download_finished)
         except Exception as e:
             print(str(e))
@@ -473,15 +472,15 @@ class BrowserWindow(QMainWindow):
         self.opend.setText("show in folder")
 
     def openloc(self):
-        if(self.openpath!=""):
+        if (self.openpath != ""):
             print("path ready")
-            path=self.openpath
+            path = self.openpath
             if 'darwin' in sys.platform:
                 subprocess.check_call(['open', '--', path])
             elif 'linux' in sys.platform:
                 subprocess.check_call(['xdg-open', path])
             elif 'win' in sys.platform:
-                subprocess.check_call(['explorer', path])
+                subprocess.call('explorer '+path)
 
     def settingui(self, index=1):
 
