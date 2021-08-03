@@ -1,12 +1,11 @@
 # importing required libraries
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5 import QtWidgets
+# from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtPrintSupport import *
-from qtwidgets import Toggle, AnimatedToggle
 import os
 import random
 import sys
@@ -15,7 +14,9 @@ import requests
 import datetime
 import time
 import io
+import webbrowser
 
+build_version="Version V:1.0.3.2-featured (Official build) (64-bit)"
 
 # main window
 class BrowserWindow(QMainWindow):
@@ -85,7 +86,7 @@ class BrowserWindow(QMainWindow):
 
         # adding action to back button
         # making current tab to go back
-        back_btn.triggered.connect(lambda: self.tabs.currentWidget().back())
+        back_btn.triggered.connect(self.tabback)
 
         # adding this to the navigation tool bar
         navtb.addAction(back_btn)
@@ -94,14 +95,14 @@ class BrowserWindow(QMainWindow):
         next_btn = QAction(self)
         next_btn.setIcon(QIcon("static/front.png"))
         next_btn.setStatusTip("Forward to next page")
-        next_btn.triggered.connect(lambda: self.tabs.currentWidget().forward())
+        next_btn.triggered.connect(self.tabforward)
         navtb.addAction(next_btn)
 
         # similarly adding reload button
         reload_btn = QAction(self)
         reload_btn.setIcon(QIcon("static/reload.png"))
         reload_btn.setStatusTip("Reload page")
-        reload_btn.triggered.connect(lambda: self.tabs.currentWidget().reload())
+        reload_btn.triggered.connect(self.tabReload)
         navtb.addAction(reload_btn)
 
         # creating home action
@@ -126,18 +127,46 @@ class BrowserWindow(QMainWindow):
         # adding line edit to tool bar
         navtb.addWidget(self.urlbar)
 
+        # added download menu
+        downMenu = QMenu()
+        downMenu.setStyleSheet(
+            "background-color:rgb(80, 80, 80); width:400px; padding:20px; color:white; font-size:16px;")
+
+        self.down = QAction(self)
+
+        self.down.setText("no downloads")
+        self.down.setStatusTip("Save current page as html")
+        self.down.triggered.connect(lambda: self.settingui(5))
+        downMenu.addAction(self.down)
+
+        self.opend = QAction(self)
+        self.opend.setText("")
+        self.openpath = ""
+
+        self.opend.setStatusTip("Save current page as html")
+        self.opend.triggered.connect(lambda: self.openloc())
+        downMenu.addAction(self.opend)
+
+        save_btn = QToolButton()
+        # tb_set.clicked.connect(self.on_click_set_value)
+        save_btn.setIcon(QIcon("static/save.png"))
+        # adding menu to nevbar
+        save_btn.setMenu(downMenu)
+        save_btn.setPopupMode(QToolButton.InstantPopup)
+        navtb.addWidget(save_btn)
+
         # adding bookmark btn
         mark_btn = QAction(self)
         mark_btn.setIcon(QIcon("static/bookmark.png"))
         mark_btn.setStatusTip("bookmark")
-        mark_btn.triggered.connect(lambda: self.tabs.currentWidget().stop())
+        mark_btn.triggered.connect(self.loadstop)
         navtb.addAction(mark_btn)
 
         # similarly adding stop action
         stop_btn = QAction(self)
         stop_btn.setIcon(QIcon("static/close.png"))
         stop_btn.setStatusTip("Stop loading current page")
-        stop_btn.triggered.connect(lambda: self.tabs.currentWidget().stop())
+        stop_btn.triggered.connect(self.loadstop)
         navtb.addAction(stop_btn)
 
         navtb.addSeparator()
@@ -194,10 +223,8 @@ class BrowserWindow(QMainWindow):
         tool_btn.setPopupMode(QToolButton.InstantPopup)
         navtb.addWidget(tool_btn)
 
-        navtb.addSeparator()
-
         # creating first tab
-        self.add_new_tab(QUrl('http://www.google.com'), 'Homepage')
+        self.add_new_tab(qurl="None", label='Homepage')
 
         # showing all the components
         self.show()
@@ -243,6 +270,8 @@ class BrowserWindow(QMainWindow):
 
         browser.loadFinished.connect(lambda: self.savehistory(browser.page().url(), browser.page().title()))
 
+        browser.page().profile().downloadRequested.connect(self._downloadRequested)
+
     # when double clicked is pressed on tabs
     def tab_open_doubleclick(self, i):
 
@@ -255,14 +284,17 @@ class BrowserWindow(QMainWindow):
     # wen tab is changed
     def current_tab_changed(self, i):
 
-        # get the curl
-        qurl = self.tabs.currentWidget().url()
+        try:
+            # get the curl
+            qurl = self.tabs.currentWidget().url()
 
-        # update the url
-        self.update_urlbar(qurl, self.tabs.currentWidget())
+            # update the url
+            self.update_urlbar(qurl, self.tabs.currentWidget())
 
-        # update the title
-        self.update_title(self.tabs.currentWidget())
+            # update the title
+            self.update_title(self.tabs.currentWidget())
+        except Exception:
+            pass
 
     # when tab is closed
     def close_current_tab(self, i):
@@ -291,17 +323,20 @@ class BrowserWindow(QMainWindow):
 
     # action to go to home
     def navigate_home(self):
-        db_res = self.conn.execute("select * from devsat where id=1")
-        result = db_res.fetchall()
-        self.db_result = result[0]
-        if self.db_result[4] == "google":
-            # go to google
-            qurl = QUrl('http://www.google.com')
-        else:
-            # go to bing
-            qurl = QUrl('http://www.bing.com')
+        try:
+            db_res = self.conn.execute("select * from devsat where id=1")
+            result = db_res.fetchall()
+            self.db_result = result[0]
+            if self.db_result[4] == "google":
+                # go to google
+                qurl = QUrl('http://www.google.com')
+            else:
+                # go to bing
+                qurl = QUrl('http://www.bing.com')
 
-        self.tabs.currentWidget().setUrl(QUrl("http://www.google.com"))
+            self.tabs.currentWidget().setUrl(QUrl("http://www.google.com"))
+        except:
+            pass
 
     # method for navigate to url
     def navigate_to_url(self):
@@ -316,7 +351,10 @@ class BrowserWindow(QMainWindow):
             q.setScheme("https")
 
         # set the url
-        self.tabs.currentWidget().setUrl(q)
+        try:
+            self.tabs.currentWidget().setUrl(q)
+        except:
+            pass
 
     # method to update the url
     def update_urlbar(self, q, browser=None):
@@ -330,6 +368,30 @@ class BrowserWindow(QMainWindow):
 
         # set cursor position
         self.urlbar.setCursorPosition(0)
+
+    def tabReload(self):
+        try:
+            self.tabs.currentWidget().reload()
+        except:
+            pass
+
+    def tabforward(self):
+        try:
+            self.tabs.currentWidget().forward()
+        except:
+            pass
+
+    def tabback(self):
+        try:
+            self.tabs.currentWidget().back()
+        except:
+            pass
+
+    def loadstop(self):
+        try:
+            self.tabs.currentWidget().stop()
+        except:
+            pass
 
     def savehistory(self, url, title):
 
@@ -372,29 +434,63 @@ class BrowserWindow(QMainWindow):
         except Exception as e:
             print(e)
 
-    def settingui(self):
-        Dialog = QtWidgets.QDialog()
+    def _downloadRequested(self, item):  # QWebEngineDownloadItem
+        try:
+            initDownPath = os.path.join(os.getenv('USERPROFILE'), 'Downloads')
+
+            my_dir = QFileDialog.getExistingDirectory(
+                self,
+                "select a download location",
+                initDownPath,
+                QFileDialog.ShowDirsOnly
+            )
+            # my_dir = my_dir.replace("/", "\\")
+            # if my_dir[-1] != "\\":
+            #     my_dir = my_dir + "\\" + item.downloadFileName()
+            # else:
+            #     my_dir = my_dir + item.downloadFileName()
+            #
+            # print(my_dir)
+            # item.setPath(my_dir)
+            print('downloading to', item.path())
+            item.accept()
+            self.down.setText("downloaded... "+item.downloadFileName())
+            self.opend.setText("show in folder")
+
+            fpath="/".join(str(item.path()).split("/")[:-1])
+            self.openpath=fpath
+            item.finished.connect(self.download_finished)
+        except Exception as e:
+            print(str(e))
+
+    def download_finished(self):
+        print("successfully downloaded")
+
+    def openloc(self):
+        if(self.openpath!=""):
+            webbrowser.open(self.openpath)
+
+    def settingui(self, index=1):
+
+        Dialog = QtWidgets.QWidget()
         ui = Ui_Dialog()
-        ui.setupUi(Dialog, self)
-        Dialog.show()
-        Dialog.exec_()
+        if index > 0:
+            ui.setupUi(Dialog, self, index)
+
+        i = self.tabs.addTab(ui.thiswindow, "settings")
+        self.tabs.setCurrentIndex(i)
 
 
 # settings dialog classes
 
 
 class Ui_Dialog(object):
-    def setupUi(self, Dialog, browser):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(1000, 600)
-        Dialog.setMinimumSize(800, 600)
-        Dialog.setWindowTitle("SETTINGS")
-        Dialog.setWindowIcon(QIcon("static/settings.png"))
+    def setupUi(self, Dialog, browser, tabindex=1):
         self.tabWidget = QtWidgets.QTabWidget(Dialog)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 100, 1000, 500))
+        self.tabWidget.setGeometry(QtCore.QRect(50, 150, 1200, 600))
         self.tabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.tabWidget.setObjectName("tabWidget")
-        self.tabWidget.setStyleSheet(u"background-color:rgb(60, 60, 60); color:white;")
+        self.tabWidget.setStyleSheet(u"background-color:rgb(50, 50, 50); color:white;")
         self.browser = browser
         # loading css file
         f = open("static/dialog.css", "r")
@@ -428,7 +524,7 @@ class Ui_Dialog(object):
 
         # settings dialog heading
         self.set = QtWidgets.QLabel(Dialog)
-        self.set.setGeometry(30, 65, 200, 30)
+        self.set.setGeometry(70, 80, 200, 30)
         self.set.setObjectName("settings")
         self.set.setText("Settings")
         self.set.setObjectName("head")
@@ -666,7 +762,7 @@ class Ui_Dialog(object):
         self.policy.setGeometry(210, 130, 500, 60)
         self.policy.setObjectName("settings")
         self.policy.setText(
-            "We will always protect and respect your privacy,\nwhile giving you the transparency and control you deserve.")
+            "We always protect and respect your privacy,\nwhile giving you the transparency and control you deserve.")
         self.policy.setObjectName("small")
         self.policy.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
@@ -718,7 +814,7 @@ class Ui_Dialog(object):
         self.version = QtWidgets.QLabel(self.about)
         self.version.setGeometry(100, 110, 500, 20)
         self.version.setObjectName("settings")
-        self.version.setText("Version V:1.0.2.1 LTS (Official build) (64-bit)")
+        self.version.setText(build_version)
         self.version.setObjectName("head")
         self.version.setStyleSheet("color:white; letter-spacing:1px; font-size:14px")
 
@@ -751,8 +847,6 @@ class Ui_Dialog(object):
         self.hislabel.setObjectName("label")
         self.hislabel.setText("History")
         self.hislabel.setObjectName("head")
-
-
 
         # scroll bar
         history = self.conn.execute("select * from history;")
@@ -819,8 +913,21 @@ class Ui_Dialog(object):
         # pushing history to widget
         self.tabWidget.addTab(self.history, "history")
 
+        # adding download page
+        self.download = QtWidgets.QWidget()
+        self.download.setObjectName("download")
+        # adding head label
+        self.dlabel = QtWidgets.QLabel(self.download)
+        self.dlabel.setGeometry(50, 20, 300, 40)
+        self.dlabel.setObjectName("label")
+        self.dlabel.setText("Downloads")
+        self.dlabel.setObjectName("head")
+
+        # pushing history to widget
+        self.tabWidget.addTab(self.download, "Downloads")
+
         # self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(tabindex)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
         # seting tab icon
@@ -850,7 +957,7 @@ class Ui_Dialog(object):
             self.conn.commit()
             for i in range(rowcount):
                 self.formLayout.removeRow(i)
-                print(i)
+
         except:
             pass
 
@@ -1078,7 +1185,6 @@ class welcome(QMainWindow):
 
             bar.setValue(x)
             time.sleep(1)
-        self.close()
 
 
 # creating a PyQt5 application
@@ -1086,6 +1192,7 @@ app = QApplication(sys.argv)
 
 # setting name to the application
 welcome = welcome()
+welcome.close()
 
 # creating MainWindow object
 window = BrowserWindow()
