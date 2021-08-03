@@ -17,7 +17,7 @@ import time
 import io
 import webbrowser
 
-build_version = "Version V:1.0.3.4 LTS (Official build) (64-bit)"
+build_version = "Version V:1.0.3.2-featured (Official build) (64-bit)"
 
 
 # main window
@@ -480,7 +480,7 @@ class BrowserWindow(QMainWindow):
             elif 'linux' in sys.platform:
                 subprocess.check_call(['xdg-open', path])
             elif 'win' in sys.platform:
-                subprocess.call('explorer '+path)
+                webbrowser.open(path)
 
     def settingui(self, index=1):
 
