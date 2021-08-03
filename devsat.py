@@ -9,6 +9,7 @@ from PyQt5.QtPrintSupport import *
 import os
 import random
 import sys
+import subprocess
 import sqlite3
 import requests
 import datetime
@@ -130,7 +131,7 @@ class BrowserWindow(QMainWindow):
         # added download menu
         downMenu = QMenu()
         downMenu.setStyleSheet(
-            "background-color:rgb(80, 80, 80); width:400px; padding:20px; color:white; font-size:16px;")
+            "background-color:rgb(80, 80, 80); width:400px; padding:10px; color:white; font-size:16px;")
 
         self.down = QAction(self)
 
@@ -436,14 +437,18 @@ class BrowserWindow(QMainWindow):
 
     def _downloadRequested(self, item):  # QWebEngineDownloadItem
         try:
-            initDownPath = os.path.join(os.getenv('USERPROFILE'), 'Downloads')
-
-            my_dir = QFileDialog.getExistingDirectory(
+            try:
+                initDownPath = os.path.join(os.getenv('USERPROFILE'), 'Downloads')
+                my_dir = QFileDialog.getExistingDirectory(
                 self,
                 "select a download location",
                 initDownPath,
                 QFileDialog.ShowDirsOnly
             )
+            except:
+                pass
+
+            
             # my_dir = my_dir.replace("/", "\\")
             # if my_dir[-1] != "\\":
             #     my_dir = my_dir + "\\" + item.downloadFileName()
@@ -455,7 +460,7 @@ class BrowserWindow(QMainWindow):
             print('downloading to', item.path())
             item.accept()
             self.down.setText("downloaded... "+item.downloadFileName())
-            self.opend.setText("show in folder")
+            
 
             fpath="/".join(str(item.path()).split("/")[:-1])
             self.openpath=fpath
@@ -465,10 +470,18 @@ class BrowserWindow(QMainWindow):
 
     def download_finished(self):
         print("successfully downloaded")
+        self.opend.setText("show in folder")
 
     def openloc(self):
         if(self.openpath!=""):
-            webbrowser.open(self.openpath)
+            print("path ready")
+            path=self.openpath
+            if 'darwin' in sys.platform:
+                subprocess.check_call(['open', '--', path])
+            elif 'linux' in sys.platform:
+                subprocess.check_call(['xdg-open', path])
+            elif 'win' in sys.platform:
+                subprocess.check_call(['explorer', path])
 
     def settingui(self, index=1):
 
@@ -487,7 +500,7 @@ class BrowserWindow(QMainWindow):
 class Ui_Dialog(object):
     def setupUi(self, Dialog, browser, tabindex=1):
         self.tabWidget = QtWidgets.QTabWidget(Dialog)
-        self.tabWidget.setGeometry(QtCore.QRect(50, 150, 1200, 600))
+        self.tabWidget.setGeometry(QtCore.QRect(50, 100, 1200, 500))
         self.tabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.tabWidget.setObjectName("tabWidget")
         self.tabWidget.setStyleSheet(u"background-color:rgb(50, 50, 50); color:white;")
@@ -524,7 +537,7 @@ class Ui_Dialog(object):
 
         # settings dialog heading
         self.set = QtWidgets.QLabel(Dialog)
-        self.set.setGeometry(70, 80, 200, 30)
+        self.set.setGeometry(70, 50, 200, 30)
         self.set.setObjectName("settings")
         self.set.setText("Settings")
         self.set.setObjectName("head")
