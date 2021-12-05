@@ -1,7 +1,7 @@
 
 <img src="static/devsat_x.png" width='100px' height="100px">
 
-# DevSAT_Browser V:1.0.2.1 LTS
+# DevSAT_Browser V:1.0.3.5 LTS
 
 
 
